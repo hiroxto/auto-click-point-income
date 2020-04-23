@@ -1,0 +1,27 @@
+{
+  "name": "auto-click-point-income",
+  "version": "0.0.1",
+  "description": "Auto click point income links.",
+  "author": "hiroxto",
+  "private": true,
+  "scripts": {
+    "start": "babel-node app.js",
+    "lint": "eslint --ext .js,.ts --ignore-path .gitignore .",
+    "lint:fix": "eslint --fix --ext .js,.ts --ignore-path .gitignore ."
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.8.4",
+    "@babel/node": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
+    "babel-eslint": "^10.0.3",
+    "dotenv": "^8.2.0",
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "puppeteer": "^2.1.1"
+  }
+}
