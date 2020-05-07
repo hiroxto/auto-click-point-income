@@ -3,7 +3,7 @@ version: '3'
 services:
   app:
     build: .
-    image: uto-click-point-income-app
+    image: auto-click-point-income-app
     volumes:
       - .:/app:cached
     cap_add:
