@@ -6,3 +6,5 @@ services:
     image: uto-click-point-income-app
     volumes:
       - .:/app:cached
+    cap_add:
+      - SYS_ADMIN
