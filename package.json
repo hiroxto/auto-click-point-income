@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Auto click point income links.",
   "author": "hiroxto",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "start": "babel-node app.js",
