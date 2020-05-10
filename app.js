@@ -4,6 +4,11 @@ const exec = require('child_process').exec;
 
 dotenv.config();
 
+const launchOptions = {
+  executablePath: '/usr/bin/chromium-browser',
+  args: ['--disable-dev-shm-usage'],
+};
+
 const headers = {
   'User-Agent': process.env.USER_AGENT,
   Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -15,7 +20,7 @@ const headers = {
 };
 
 async function main () {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch(launchOptions);
 
   try {
     const page = await browser.newPage();
@@ -52,7 +57,7 @@ async function getMailMagazineUrls (page) {
 }
 
 async function openMailMagazines (mailMagazineUrl) {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch(launchOptions);
 
   try {
     const page = await browser.newPage();

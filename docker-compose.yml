@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    image: auto-click-point-income-app
+    volumes:
+      - .:/app:cached
+    cap_add:
+      - SYS_ADMIN
