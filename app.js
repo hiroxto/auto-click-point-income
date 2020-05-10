@@ -4,10 +4,7 @@ const exec = require('child_process').exec;
 
 dotenv.config();
 
-const launchOptions = {
-  executablePath: '/usr/bin/chromium-browser',
-  args: ['--disable-dev-shm-usage'],
-};
+const launchOptions = {};
 
 const headers = {
   'User-Agent': process.env.USER_AGENT,
