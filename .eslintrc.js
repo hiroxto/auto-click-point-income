@@ -1,17 +1,19 @@
 module.exports = {
   root: true,
   parserOptions: {
-    parser: 'babel-eslint',
+    parser: '@typescript-eslint/parser',
   },
   env: {
     browser: true,
     node: true,
   },
   extends: [
+    'plugin:@typescript-eslint/recommended',
     'plugin:promise/recommended',
     'standard',
   ],
   plugins: [
+    '@typescript-eslint',
     'promise',
   ],
   rules: {
@@ -20,7 +22,8 @@ module.exports = {
     'no-console': 'off',
     'no-new': 'off',
     indent: ['error', 2],
-    'quote-props': ['error', 'as-needed'],
     'promise/catch-or-return': ['error', { allowThen: true, terminationMethod: ['catch', 'asCallback', 'finally'] }],
+    '@typescript-eslint/array-type': ['error', { default: 'array' }],
+    '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
   },
 };
