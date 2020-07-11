@@ -1,5 +1,7 @@
 import puppeteer from 'puppeteer';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const dotenv = require('dotenv');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const exec = require('child_process').exec;
 
 dotenv.config();
@@ -30,6 +32,7 @@ async function main () {
       const urls = await openMailMagazines(mailMagazineUrl);
       const joinedUrls = urls.map(u => `"${u}"`).join(' ');
       console.log(urls.join('\n'));
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
       exec(`curl -L ${joinedUrls} >> /dev/null`, (_err, _stdout, _stderr) => {});
     });
   } catch (e) {
