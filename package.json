@@ -6,7 +6,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "babel-node app.js",
+    "start": "babel-node src/app.ts",
     "lint": "eslint --ext .js,.ts --ignore-path .gitignore .",
     "lint:fix": "eslint --fix --ext .js,.ts --ignore-path .gitignore ."
   },
