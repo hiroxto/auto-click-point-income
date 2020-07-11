@@ -1,12 +1,14 @@
-import puppeteer from 'puppeteer';
-import dotenv from 'dotenv';
+import puppeteer, { Headers, LaunchOptions, Page } from 'puppeteer';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const dotenv = require('dotenv');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const exec = require('child_process').exec;
 
 dotenv.config();
 
-const launchOptions = {};
+const launchOptions: LaunchOptions = {};
 
-const headers = {
+const headers: Headers = {
   'User-Agent': process.env.USER_AGENT,
   Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
   'Accept-Language': 'ja,en-US;q=0.7,en;q=0.3',
@@ -30,21 +32,22 @@ async function main () {
       const urls = await openMailMagazines(mailMagazineUrl);
       const joinedUrls = urls.map(u => `"${u}"`).join(' ');
       console.log(urls.join('\n'));
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
       exec(`curl -L ${joinedUrls} >> /dev/null`, (_err, _stdout, _stderr) => {});
     });
   } catch (e) {
     console.log(e);
   } finally {
-    browser.close();
+    await browser.close();
   }
 }
 
-async function getMailMagazineUrls (page) {
-  const urls = await page.evaluate(() => {
+async function getMailMagazineUrls (page: Page) : Promise<string[]> {
+  const urls = await page.evaluate((): string[] => {
     const urlList = [];
     const nodeList = document.querySelectorAll('.box_ad.notyet > td > a.txt_elli');
     nodeList.forEach(node => {
-      urlList.push(node.href);
+      urlList.push(node.getAttribute('href'));
     });
 
     return urlList;
@@ -53,7 +56,7 @@ async function getMailMagazineUrls (page) {
   return urls;
 }
 
-async function openMailMagazines (mailMagazineUrl) {
+async function openMailMagazines (mailMagazineUrl: string) {
   const browser = await puppeteer.launch(launchOptions);
 
   try {
@@ -64,7 +67,7 @@ async function openMailMagazines (mailMagazineUrl) {
       const mailMagazineUrls = [];
       const nodes = document.querySelectorAll('#mymail > pre.magagine_detail_txt > a');
       nodes.forEach(node => {
-        const hrefValue = node.href;
+        const hrefValue = node.getAttribute('href');
 
         if (hrefValue.match(/click_mail_magazine/)) {
           mailMagazineUrls.push(hrefValue);
@@ -74,13 +77,13 @@ async function openMailMagazines (mailMagazineUrl) {
       return mailMagazineUrls;
     });
 
-    browser.close();
+    await browser.close();
 
     return urls;
   } catch (e) {
     console.log(e);
 
-    browser.close();
+    await browser.close();
     throw e;
   }
 }
