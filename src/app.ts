@@ -1,5 +1,5 @@
 import puppeteer from 'puppeteer';
-import dotenv from 'dotenv';
+const dotenv = require('dotenv');
 const exec = require('child_process').exec;
 
 dotenv.config();
