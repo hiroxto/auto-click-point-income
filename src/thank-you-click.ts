@@ -27,7 +27,7 @@ export class ThankYouClick {
           await this.readAdArticles(unreadAdUrls);
         }
 
-        const nextButtonsLength = await page.$$eval<Number>('a.next', (el: HTMLAnchorElement[]) => el.length);
+        const nextButtonsLength = await page.$$eval<number>('a.next', (el: HTMLAnchorElement[]) => el.length);
 
         if (nextButtonsLength !== 0) {
           await Promise.all([
