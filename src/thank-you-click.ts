@@ -1,8 +1,9 @@
-import puppeteer, { Headers, LaunchOptions, Page } from 'puppeteer';
+import puppeteer, { Browser, Headers, LaunchOptions, Page } from 'puppeteer';
 
 export class ThankYouClick {
   launchOptions: LaunchOptions;
   headers: Headers;
+  browser: Browser;
 
   constructor (launchOptions: LaunchOptions, headers: Headers) {
     this.launchOptions = launchOptions;
@@ -10,15 +11,16 @@ export class ThankYouClick {
   }
 
   async start (): Promise<void> {
-    const browser = await puppeteer.launch(this.launchOptions);
+    this.browser = await puppeteer.launch(this.launchOptions);
 
     try {
-      const page = await browser.newPage();
+      const page = await this.browser.newPage();
       await page.setExtraHTTPHeaders(this.headers);
       await page.goto('https://pointi.jp/contents/39_news/');
       const lastPageNumber = await this.getLastPageNumber(page);
 
       for (let pageNumber = 1; pageNumber <= lastPageNumber; pageNumber++) {
+        console.log(`PageNumber: ${pageNumber}`);
         const unreadAdUrls = await this.getUnreadAdUrls(page);
 
         if (unreadAdUrls.length !== 0) {
@@ -34,7 +36,7 @@ export class ThankYouClick {
     } catch (e) {
       console.log(e);
     } finally {
-      await browser.close();
+      await this.browser.close();
     }
   }
 
@@ -84,12 +86,10 @@ export class ThankYouClick {
    */
   async readAdArticles (adArticleUrls: string[]): Promise<void> {
     const buttonSelector = 'div.btn_wrap > a.go_btn';
-
     await Promise.all(adArticleUrls.map(async adArticleUrl => {
       console.log(`Read ${adArticleUrl}`);
-      const browser = await puppeteer.launch(this.launchOptions);
       try {
-        const page = await browser.newPage();
+        const page = await this.browser.newPage();
         await page.setExtraHTTPHeaders(this.headers);
         await page.goto(adArticleUrl);
 
@@ -102,13 +102,15 @@ export class ThankYouClick {
           ]);
         } while (goButtonText !== 'スタンプをゲットする');
 
-        await browser.close();
+        await page.close();
+        console.log(`Done ${adArticleUrl}`);
       } catch (e) {
         console.log(adArticleUrl);
         console.log(e);
-        await browser.close();
         throw new Error(`${adArticleUrl} でエラーが発生`);
       }
-    }));
+    })).catch(async e => {
+      console.log(e);
+    });
   }
 }
