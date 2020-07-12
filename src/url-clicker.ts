@@ -11,7 +11,11 @@ export class URLClicker {
    * 広告 URL へのアクセスを実行する
    */
   execute (): ChildProcess {
-    return exec(this.buildCommand());
+    return exec(this.buildCommand(), error => {
+      if (error !== null) {
+        console.log(error);
+      }
+    });
   }
 
   /**
