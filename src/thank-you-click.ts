@@ -27,11 +27,14 @@ export class ThankYouClick {
           await this.readAdArticles(unreadAdUrls);
         }
 
-        // 次のページへ移動
-        await Promise.all([
-          page.waitForNavigation({ waitUntil: ['load', 'networkidle2'] }),
-          page.click('a[class="next"]'),
-        ]);
+        const nextButtonsLength = await page.$$eval<Number>('a.next', (el: HTMLAnchorElement[]) => el.length);
+
+        if (nextButtonsLength !== 0) {
+          await Promise.all([
+            page.waitForNavigation({ waitUntil: ['load', 'networkidle2'] }),
+            page.click('a[class="next"]'),
+          ]);
+        }
       }
     } catch (e) {
       console.log(e);
