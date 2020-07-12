@@ -1,4 +1,5 @@
 import puppeteer, { Browser, Headers, LaunchOptions, Page } from 'puppeteer';
+import { URLClicker } from './url-clicker';
 
 export class ShoppingClick {
   launchOptions: LaunchOptions;
@@ -18,6 +19,9 @@ export class ShoppingClick {
       await page.setExtraHTTPHeaders(this.headers);
       await page.goto('https://pointi.jp/shopping/');
       const unClickedUrls = await this.pickUnClickedUrls(page);
+      const clicker = new URLClicker(unClickedUrls);
+      clicker.displayUrls();
+      clicker.execute();
     } catch (e) {
       console.log(e);
     } finally {
