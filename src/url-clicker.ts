@@ -1,21 +1,35 @@
-import { ChildProcess, exec } from 'child_process';
+import { Browser } from 'puppeteer';
 
 export class URLClicker {
+  browser: Browser;
   urls: string[];
 
-  constructor (urls: string[]) {
+  constructor (browser: Browser, urls: string[]) {
+    this.browser = browser;
     this.urls = urls;
   }
 
   /**
    * 広告 URL へのアクセスを実行する
    */
-  execute (): ChildProcess {
-    return exec(this.buildCommand(), error => {
-      if (error !== null) {
-        console.log(error);
+  async execute (): Promise<void> {
+    await Promise.all(this.urls.map(async url => {
+      console.log(`Access to ${url}`);
+      const page = await this.browser.newPage();
+
+      try {
+        await page.setDefaultNavigationTimeout(0);
+        await page.goto(url);
+        await page.close();
+        console.log(`Finish access to ${url}`);
+      } catch (e) {
+        console.log(e);
+      } finally {
+        await page.close();
       }
-    });
+
+      return url;
+    }));
   }
 
   /**
