@@ -92,6 +92,7 @@ export class ThankYouClick {
         const page = await this.browser.newPage();
         await page.setExtraHTTPHeaders(this.headers);
         await page.goto(adArticleUrl);
+        await page.setDefaultNavigationTimeout(0);
 
         let goButtonText;
         do {
