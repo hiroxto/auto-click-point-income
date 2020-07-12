@@ -17,7 +17,7 @@ export class ThankYouClick {
       const page = await this.browser.newPage();
       await page.setExtraHTTPHeaders(this.headers);
       await page.goto('https://pointi.jp/contents/39_news/');
-      const lastPageNumber = await this.getLastPageNumber(page);
+      const lastPageNumber = process.env.THANK_YOU_LAST_PAGE === undefined ? await this.getLastPageNumber(page) : Number(process.env.THANK_YOU_LAST_PAGE);
 
       for (let pageNumber = 1; pageNumber <= lastPageNumber; pageNumber++) {
         console.log(`PageNumber: ${pageNumber}`);
