@@ -8,7 +8,7 @@ dotenv.config();
 
 const launchOptions: LaunchOptions = {};
 
-const mailClickHeaders: Headers = {
+const headers: Headers = {
   'User-Agent': process.env.USER_AGENT,
   Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
   'Accept-Language': 'ja,en-US;q=0.7,en;q=0.3',
@@ -19,12 +19,12 @@ const mailClickHeaders: Headers = {
 };
 
 const startMailClick = async (): Promise<void> => {
-  const mailClick = new MailClick(launchOptions, mailClickHeaders);
+  const mailClick = new MailClick(launchOptions, headers);
   await mailClick.start();
 };
 
 const startThankYouClick = async (): Promise<void> => {
-  const thankYouClick = new ThankYouClick(launchOptions, mailClickHeaders);
+  const thankYouClick = new ThankYouClick(launchOptions, headers);
   await thankYouClick.start();
 };
 
