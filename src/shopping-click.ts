@@ -25,7 +25,7 @@ export class ShoppingClick {
         clicker.displayUrls();
         clicker.execute();
       } else {
-        console.log('実行可能URLが存在しません.')
+        console.log('実行可能URLが存在しません.');
       }
     } catch (e) {
       console.log(e);
