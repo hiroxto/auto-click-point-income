@@ -20,8 +20,13 @@ export class ShoppingClick {
       await page.goto('https://pointi.jp/shopping/');
       const unClickedUrls = await this.pickUnClickedUrls(page);
       const clicker = new URLClicker(unClickedUrls);
-      clicker.displayUrls();
-      clicker.execute();
+
+      if (clicker.isExecutable()) {
+        clicker.displayUrls();
+        clicker.execute();
+      } else {
+        console.log('実行可能URLが存在しません.')
+      }
     } catch (e) {
       console.log(e);
     } finally {
