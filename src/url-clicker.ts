@@ -19,6 +19,13 @@ export class URLClicker {
   }
 
   /**
+   * コマンドが実行可能かを確認する
+   */
+  isExecutable (): boolean {
+    return this.urls.length > 0;
+  }
+
+  /**
    * URL 一覧を表示する.
    */
   displayUrls (): string {
