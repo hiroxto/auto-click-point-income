@@ -13,10 +13,10 @@ export class MailClick {
   }
 
   async start (): Promise<void> {
-    const browser = await puppeteer.launch(this.launchOptions);
+    this.browser = await puppeteer.launch(this.launchOptions);
 
     try {
-      const page = await browser.newPage();
+      const page = await this.browser.newPage();
       await page.setExtraHTTPHeaders(this.headers);
       await page.goto('https://pointi.jp/my/my_page.php');
       const mailMagazineUrls = await this.getMailMagazineUrls(page);
@@ -32,7 +32,7 @@ export class MailClick {
     } catch (e) {
       console.log(e);
     } finally {
-      await browser.close();
+      await this.browser.close();
     }
   }
 
