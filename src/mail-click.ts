@@ -38,9 +38,9 @@ export class MailClick {
   async getMailMagazineUrls (page: Page): Promise<string[]> {
     const urls = await page.evaluate((): string[] => {
       const urlList = [];
-      const nodeList = document.querySelectorAll('.box_ad.notyet > td > a.txt_elli');
+      const nodeList = document.querySelectorAll<HTMLAnchorElement>('.box_ad.notyet > td > a.txt_elli');
       nodeList.forEach(node => {
-        urlList.push(node.getAttribute('href'));
+        urlList.push(node.href);
       });
 
       return urlList;
@@ -58,9 +58,9 @@ export class MailClick {
       await page.goto(mailMagazineUrl);
       const urls = await page.evaluate(() => {
         const mailMagazineUrls = [];
-        const nodes = document.querySelectorAll('#mymail > pre.magagine_detail_txt > a');
+        const nodes = document.querySelectorAll<HTMLAnchorElement>('#mymail > pre.magagine_detail_txt > a');
         nodes.forEach(node => {
-          const hrefValue = node.getAttribute('href');
+          const hrefValue = node.href;
 
           if (hrefValue.match(/click_mail_magazine/)) {
             mailMagazineUrls.push(hrefValue);
