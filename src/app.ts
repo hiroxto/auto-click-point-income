@@ -1,5 +1,6 @@
 import { Headers, LaunchOptions } from 'puppeteer';
 import { MailClick } from './mail-click';
+import { ThankYouClick } from './thank-you-click';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const dotenv = require('dotenv');
 
@@ -22,8 +23,14 @@ async function startMailClick () : Promise<void> {
   await mailClick.start();
 }
 
+const startThankYouClick = async (): Promise<void> => {
+  const thankYouClick = new ThankYouClick(launchOptions, mailClickHeaders);
+  await thankYouClick.start();
+};
+
 async function main () {
   await startMailClick();
+  await startThankYouClick();
 }
 
 console.log(main());
