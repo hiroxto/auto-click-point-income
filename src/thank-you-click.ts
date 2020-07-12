@@ -19,7 +19,7 @@ export class ThankYouClick {
       const lastPageNumber = await this.getLastPageNumber(page);
 
       for (let pageNumber = 1; pageNumber <= lastPageNumber; pageNumber++) {
-        const adUrls = await this.getAdUrls(page);
+        const unreadAdUrls = await this.getUnreadAdUrls(page);
 
         // 次のページへ移動
         await Promise.all([
@@ -58,7 +58,7 @@ export class ThankYouClick {
    * 未読の広告 URL を取得する
    * @param page
    */
-  async getAdUrls (page: Page): Promise<string[]> {
+  async getUnreadAdUrls (page: Page): Promise<string[]> {
     return await page.evaluate((): string[] => {
       const urlsList: string[] = [];
       const nodeList = document.querySelectorAll<HTMLAnchorElement>('ul#link_list > li > a');
