@@ -1,4 +1,4 @@
-import puppeteer, { Browser, Headers, LaunchOptions } from 'puppeteer';
+import puppeteer, { Browser, Headers, LaunchOptions, Page } from 'puppeteer';
 
 export class ShoppingClick {
   launchOptions: LaunchOptions;
@@ -17,10 +17,23 @@ export class ShoppingClick {
       const page = await this.browser.newPage();
       await page.setExtraHTTPHeaders(this.headers);
       await page.goto('https://pointi.jp/shopping/');
+      const unClickedUrls = await this.pickUnClickedUrls(page);
     } catch (e) {
       console.log(e);
     } finally {
       await this.browser.close();
     }
+  }
+
+  /**
+   * 未クリックの広告 URL を取得する
+   * href に click_incentive が含まれていて, クラスに off_btn が含まれていない a タグを抽出
+   * @param page
+   */
+  async pickUnClickedUrls (page: Page) :Promise<string[]> {
+    return await page.$$eval<string[]>('a.go_btn', (elements: HTMLAnchorElement[]) => {
+      return elements.filter(el => el.href.match(/click_incentive/) && !el.classList.contains('off_btn'))
+        .map(el => el.href);
+    });
   }
 }
