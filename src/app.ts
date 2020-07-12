@@ -18,10 +18,10 @@ const mailClickHeaders: Headers = {
   'Upgrade-Insecure-Requests': '1',
 };
 
-async function startMailClick () : Promise<void> {
+const startMailClick = async (): Promise<void> => {
   const mailClick = new MailClick(launchOptions, mailClickHeaders);
   await mailClick.start();
-}
+};
 
 const startThankYouClick = async (): Promise<void> => {
   const thankYouClick = new ThankYouClick(launchOptions, mailClickHeaders);
