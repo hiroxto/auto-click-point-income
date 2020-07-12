@@ -28,9 +28,9 @@ const startThankYouClick = async (): Promise<void> => {
   await thankYouClick.start();
 };
 
-async function main () {
+const main = async (): Promise<void> => {
   await startMailClick();
   await startThankYouClick();
-}
+};
 
 console.log(main());
