@@ -51,10 +51,9 @@ export class MailClick {
   }
 
   async openMailMagazines (mailMagazineUrl: string): Promise<string[]> {
-    const browser = await puppeteer.launch(this.launchOptions);
+    const page = await this.browser.newPage();
 
     try {
-      const page = await browser.newPage();
       await page.setExtraHTTPHeaders(this.headers);
       await page.goto(mailMagazineUrl);
       const urls = await page.evaluate(() => {
@@ -71,13 +70,12 @@ export class MailClick {
         return mailMagazineUrls;
       });
 
-      await browser.close();
+      await page.close();
 
       return urls;
     } catch (e) {
       console.log(e);
-
-      await browser.close();
+      await page.close();
       throw e;
     }
   }
