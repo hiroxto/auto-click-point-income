@@ -21,6 +21,10 @@ export class ThankYouClick {
       for (let pageNumber = 1; pageNumber <= lastPageNumber; pageNumber++) {
         const unreadAdUrls = await this.getUnreadAdUrls(page);
 
+        if (unreadAdUrls.length !== 0) {
+          await this.readAdArticles(unreadAdUrls);
+        }
+
         // 次のページへ移動
         await Promise.all([
           page.waitForNavigation({ waitUntil: ['load', 'networkidle2'] }),
@@ -72,5 +76,39 @@ export class ThankYouClick {
 
       return urlsList;
     });
+  }
+
+  /**
+   * 未読のコンテンツを読む
+   * @param adArticleUrls
+   */
+  async readAdArticles (adArticleUrls: string[]): Promise<void> {
+    const buttonSelector = 'div.btn_wrap > a.go_btn';
+
+    await Promise.all(adArticleUrls.map(async adArticleUrl => {
+      console.log(`Read ${adArticleUrl}`);
+      const browser = await puppeteer.launch(this.launchOptions);
+      try {
+        const page = await browser.newPage();
+        await page.setExtraHTTPHeaders(this.headers);
+        await page.goto(adArticleUrl);
+
+        let goButtonText;
+        do {
+          goButtonText = await page.$eval(buttonSelector, (el: HTMLAnchorElement) => el.text);
+          await Promise.all([
+            page.waitForNavigation({ waitUntil: ['load', 'networkidle2'] }),
+            page.click(buttonSelector),
+          ]);
+        } while (goButtonText !== 'スタンプをゲットする');
+
+        await browser.close();
+      } catch (e) {
+        console.log(adArticleUrl);
+        console.log(e);
+        await browser.close();
+        throw new Error(`${adArticleUrl} でエラーが発生`);
+      }
+    }));
   }
 }
