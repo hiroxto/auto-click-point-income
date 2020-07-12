@@ -1,10 +1,11 @@
-import puppeteer, { Headers, LaunchOptions, Page } from 'puppeteer';
+import puppeteer, { Browser, Headers, LaunchOptions, Page } from 'puppeteer';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const exec = require('child_process').exec;
 
 export class MailClick {
   launchOptions: LaunchOptions;
   headers: Headers;
+  browser: Browser;
 
   constructor (launchOptions: LaunchOptions, headers: Headers) {
     this.launchOptions = launchOptions;
