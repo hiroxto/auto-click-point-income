@@ -20,7 +20,6 @@ export class URLClicker {
       try {
         await page.setDefaultNavigationTimeout(0);
         await page.goto(url);
-        await page.close();
         console.log(`Finish access to ${url}`);
       } catch (e) {
         console.log(e);
