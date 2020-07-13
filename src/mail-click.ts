@@ -1,10 +1,10 @@
-import puppeteer, { Headers, LaunchOptions, Page } from 'puppeteer';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const exec = require('child_process').exec;
+import puppeteer, { Browser, Headers, LaunchOptions, Page } from 'puppeteer';
+import { URLClicker } from './url-clicker';
 
 export class MailClick {
   launchOptions: LaunchOptions;
   headers: Headers;
+  browser: Browser;
 
   constructor (launchOptions: LaunchOptions, headers: Headers) {
     this.launchOptions = launchOptions;
@@ -12,72 +12,76 @@ export class MailClick {
   }
 
   async start (): Promise<void> {
-    const browser = await puppeteer.launch(this.launchOptions);
+    this.browser = await puppeteer.launch(this.launchOptions);
 
     try {
-      const page = await browser.newPage();
-      await page.setExtraHTTPHeaders(this.headers);
-      await page.goto('https://pointi.jp/my/my_page.php');
-      const mailMagazineUrls = await this.getMailMagazineUrls(page);
+      const page = await this.createNewPage('https://pointi.jp/my/my_page.php');
+      const mailMagazineUrls = await this.getUnreadMailMagazineUrls(page);
 
-      await mailMagazineUrls.map(async (mailMagazineUrl) => {
+      console.log(`Unread mail magazines count : ${mailMagazineUrls.length}`);
+
+      await Promise.all(mailMagazineUrls.map(async (mailMagazineUrl) => {
         console.log(mailMagazineUrl);
-        const urls = await this.openMailMagazines(mailMagazineUrl);
-        const joinedUrls = urls.map(u => `"${u}"`).join(' ');
-        console.log(urls.join('\n'));
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
-        exec(`curl -L ${joinedUrls} >> /dev/null`, (_err, _stdout, _stderr) => {});
-      });
+        const mailMagazinePage = await this.createNewPage(mailMagazineUrl);
+        const clickableUrls = await this.pickClickableUrls(mailMagazinePage);
+        const clicker = new URLClicker(this.browser, clickableUrls);
+
+        if (clicker.isExecutable()) {
+          clicker.displayUrls();
+          await clicker.execute();
+        } else {
+          console.log('実行可能URLが存在しません.');
+        }
+      }));
     } catch (e) {
       console.log(e);
     } finally {
-      await browser.close();
+      await this.browser.close();
     }
   }
 
-  async getMailMagazineUrls (page: Page): Promise<string[]> {
-    const urls = await page.evaluate((): string[] => {
-      const urlList = [];
-      const nodeList = document.querySelectorAll<HTMLAnchorElement>('.box_ad.notyet > td > a.txt_elli');
-      nodeList.forEach(node => {
-        urlList.push(node.href);
-      });
-
-      return urlList;
+  /**
+   * 未読のメールマガジンのURLを取得する
+   * @param page
+   */
+  async getUnreadMailMagazineUrls (page: Page): Promise<string[]> {
+    return await page.$$eval<string[]>('.box_ad.notyet > td > a.txt_elli', (elements: HTMLAnchorElement[]) => {
+      return elements.map(element => element.href);
     });
-
-    return urls;
   }
 
-  async openMailMagazines (mailMagazineUrl: string): Promise<string[]> {
-    const browser = await puppeteer.launch(this.launchOptions);
+  /**
+   * メールマガジンのページからクリック可能なURLを抽出する
+   *
+   * @param mailMagazinePage
+   */
+  async pickClickableUrls (mailMagazinePage: Page): Promise<string[]> {
+    return await mailMagazinePage.evaluate(() => {
+      const mailMagazineUrls = [];
+      const nodes = document.querySelectorAll<HTMLAnchorElement>('#mymail > pre.magagine_detail_txt > a');
+      nodes.forEach(node => {
+        const hrefValue = node.href;
 
-    try {
-      const page = await browser.newPage();
-      await page.setExtraHTTPHeaders(this.headers);
-      await page.goto(mailMagazineUrl);
-      const urls = await page.evaluate(() => {
-        const mailMagazineUrls = [];
-        const nodes = document.querySelectorAll<HTMLAnchorElement>('#mymail > pre.magagine_detail_txt > a');
-        nodes.forEach(node => {
-          const hrefValue = node.href;
-
-          if (hrefValue.match(/click_mail_magazine/)) {
-            mailMagazineUrls.push(hrefValue);
-          }
-        });
-
-        return mailMagazineUrls;
+        if (hrefValue.match(/click_mail_magazine/)) {
+          mailMagazineUrls.push(hrefValue);
+        }
       });
 
-      await browser.close();
+      return mailMagazineUrls;
+    });
+  }
 
-      return urls;
-    } catch (e) {
-      console.log(e);
+  /**
+   * HTTPヘッダーやタイムアウトの設定を済ませた新しいページを作成する
+   *
+   * @param url
+   */
+  async createNewPage (url: string): Promise<Page> {
+    const page = await this.browser.newPage();
+    await page.setExtraHTTPHeaders(this.headers);
+    await page.setDefaultTimeout(0);
+    await page.goto(url);
 
-      await browser.close();
-      throw e;
-    }
+    return page;
   }
 }
