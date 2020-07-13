@@ -1,10 +1,11 @@
-import puppeteer, { Headers, LaunchOptions, Page } from 'puppeteer';
+import puppeteer, { Browser, Headers, LaunchOptions, Page } from 'puppeteer';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const exec = require('child_process').exec;
 
 export class MailClick {
   launchOptions: LaunchOptions;
   headers: Headers;
+  browser: Browser;
 
   constructor (launchOptions: LaunchOptions, headers: Headers) {
     this.launchOptions = launchOptions;
@@ -12,10 +13,10 @@ export class MailClick {
   }
 
   async start (): Promise<void> {
-    const browser = await puppeteer.launch(this.launchOptions);
+    this.browser = await puppeteer.launch(this.launchOptions);
 
     try {
-      const page = await browser.newPage();
+      const page = await this.browser.newPage();
       await page.setExtraHTTPHeaders(this.headers);
       await page.goto('https://pointi.jp/my/my_page.php');
       const mailMagazineUrls = await this.getMailMagazineUrls(page);
@@ -31,7 +32,7 @@ export class MailClick {
     } catch (e) {
       console.log(e);
     } finally {
-      await browser.close();
+      await this.browser.close();
     }
   }
 
@@ -50,10 +51,9 @@ export class MailClick {
   }
 
   async openMailMagazines (mailMagazineUrl: string): Promise<string[]> {
-    const browser = await puppeteer.launch(this.launchOptions);
+    const page = await this.browser.newPage();
 
     try {
-      const page = await browser.newPage();
       await page.setExtraHTTPHeaders(this.headers);
       await page.goto(mailMagazineUrl);
       const urls = await page.evaluate(() => {
@@ -70,13 +70,12 @@ export class MailClick {
         return mailMagazineUrls;
       });
 
-      await browser.close();
+      await page.close();
 
       return urls;
     } catch (e) {
       console.log(e);
-
-      await browser.close();
+      await page.close();
       throw e;
     }
   }
