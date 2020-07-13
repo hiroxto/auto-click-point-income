@@ -1,4 +1,5 @@
 import { Headers, LaunchOptions } from 'puppeteer';
+import { DailyClick } from './daily-click';
 import { MailClick } from './mail-click';
 import { ShoppingClick } from './shopping-click';
 import { ThankYouClick } from './thank-you-click';
@@ -19,6 +20,11 @@ const headers: Headers = {
   'Upgrade-Insecure-Requests': '1',
 };
 
+const startDailyClick = async (): Promise<void> => {
+  const dailyClick = new DailyClick(launchOptions, headers);
+  await dailyClick.start();
+};
+
 const startMailClick = async (): Promise<void> => {
   const mailClick = new MailClick(launchOptions, headers);
   await mailClick.start();
@@ -35,6 +41,7 @@ const startThankYouClick = async (): Promise<void> => {
 };
 
 const main = async (): Promise<void> => {
+  await startDailyClick();
   await startMailClick();
   await startShoppingClick();
   await startThankYouClick();
