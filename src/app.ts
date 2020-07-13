@@ -1,5 +1,6 @@
 import { Headers, LaunchOptions } from 'puppeteer';
 import { MailClick } from './mail-click';
+import { ShoppingClick } from './shopping-click';
 import { ThankYouClick } from './thank-you-click';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const dotenv = require('dotenv');
@@ -23,6 +24,11 @@ const startMailClick = async (): Promise<void> => {
   await mailClick.start();
 };
 
+const startShoppingClick = async (): Promise<void> => {
+  const shoppingClick = new ShoppingClick(launchOptions, headers);
+  await shoppingClick.start();
+};
+
 const startThankYouClick = async (): Promise<void> => {
   const thankYouClick = new ThankYouClick(launchOptions, headers);
   await thankYouClick.start();
@@ -30,6 +36,7 @@ const startThankYouClick = async (): Promise<void> => {
 
 const main = async (): Promise<void> => {
   await startMailClick();
+  await startShoppingClick();
   await startThankYouClick();
 };
 
