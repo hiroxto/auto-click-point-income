@@ -15,9 +15,7 @@ export class MailClick {
     this.browser = await puppeteer.launch(this.launchOptions);
 
     try {
-      const page = await this.browser.newPage();
-      await page.setExtraHTTPHeaders(this.headers);
-      await page.goto('https://pointi.jp/my/my_page.php');
+      const page = await this.createNewPage('https://pointi.jp/my/my_page.php');
       const mailMagazineUrls = await this.getUnreadMailMagazineUrls(page);
 
       await mailMagazineUrls.map(async (mailMagazineUrl) => {
