@@ -18,7 +18,7 @@ export class MailClick {
       const page = await this.browser.newPage();
       await page.setExtraHTTPHeaders(this.headers);
       await page.goto('https://pointi.jp/my/my_page.php');
-      const mailMagazineUrls = await this.getMailMagazineUrls(page);
+      const mailMagazineUrls = await this.getUnreadMailMagazineUrls(page);
 
       await mailMagazineUrls.map(async (mailMagazineUrl) => {
         console.log(mailMagazineUrl);
@@ -39,18 +39,14 @@ export class MailClick {
     }
   }
 
-  async getMailMagazineUrls (page: Page): Promise<string[]> {
-    const urls = await page.evaluate((): string[] => {
-      const urlList = [];
-      const nodeList = document.querySelectorAll<HTMLAnchorElement>('.box_ad.notyet > td > a.txt_elli');
-      nodeList.forEach(node => {
-        urlList.push(node.href);
-      });
-
-      return urlList;
+  /**
+   * 未読のメールマガジンのURLを取得する
+   * @param page
+   */
+  async getUnreadMailMagazineUrls (page: Page): Promise<string[]> {
+    return await page.$$eval<string[]>('.box_ad.notyet > td > a.txt_elli', (elements: HTMLAnchorElement[])  => {
+      return elements.map(element => element.href)
     });
-
-    return urls;
   }
 
   async openMailMagazines (mailMagazineUrl: string): Promise<string[]> {
