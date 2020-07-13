@@ -20,7 +20,7 @@ export class MailClick {
 
       console.log(`Unread mail magazines count : ${mailMagazineUrls.length}`);
 
-      await mailMagazineUrls.map(async (mailMagazineUrl) => {
+      await Promise.all(mailMagazineUrls.map(async (mailMagazineUrl) => {
         console.log(mailMagazineUrl);
         const mailMagazinePage = await this.createNewPage(mailMagazineUrl);
         const clickableUrls = await this.pickClickableUrls(mailMagazinePage);
@@ -32,7 +32,7 @@ export class MailClick {
         } else {
           console.log('実行可能URLが存在しません.');
         }
-      });
+      }));
     } catch (e) {
       console.log(e);
     } finally {
