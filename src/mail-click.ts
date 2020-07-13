@@ -18,6 +18,8 @@ export class MailClick {
       const page = await this.createNewPage('https://pointi.jp/my/my_page.php');
       const mailMagazineUrls = await this.getUnreadMailMagazineUrls(page);
 
+      console.log(`Unread mail magazines count : ${mailMagazineUrls.length}`);
+
       await mailMagazineUrls.map(async (mailMagazineUrl) => {
         console.log(mailMagazineUrl);
         const mailMagazinePage = await this.createNewPage(mailMagazineUrl);
