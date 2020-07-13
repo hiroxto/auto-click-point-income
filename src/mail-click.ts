@@ -79,7 +79,7 @@ export class MailClick {
   async createNewPage (url: string): Promise<Page> {
     const page = await this.browser.newPage();
     await page.setExtraHTTPHeaders(this.headers);
-    await page.setDefaultNavigationTimeout(0);
+    await page.setDefaultTimeout(0);
     await page.goto(url);
 
     return page;
