@@ -1,6 +1,5 @@
 import puppeteer, { Browser, Headers, LaunchOptions, Page } from 'puppeteer';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const exec = require('child_process').exec;
+import { URLClicker } from './url-clicker';
 
 export class MailClick {
   launchOptions: LaunchOptions;
@@ -24,10 +23,14 @@ export class MailClick {
       await mailMagazineUrls.map(async (mailMagazineUrl) => {
         console.log(mailMagazineUrl);
         const urls = await this.openMailMagazines(mailMagazineUrl);
-        const joinedUrls = urls.map(u => `"${u}"`).join(' ');
-        console.log(urls.join('\n'));
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
-        exec(`curl -L ${joinedUrls} >> /dev/null`, (_err, _stdout, _stderr) => {});
+        const clicker = new URLClicker(this.browser, urls);
+
+        if (clicker.isExecutable()) {
+          clicker.displayUrls();
+          await clicker.execute();
+        } else {
+          console.log('実行可能URLが存在しません.');
+        }
       });
     } catch (e) {
       console.log(e);
