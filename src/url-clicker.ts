@@ -46,13 +46,4 @@ export class URLClicker {
     console.log(joinedUrls);
     return joinedUrls;
   }
-
-  /**
-   * 実行するコマンドを作成する
-   */
-  private buildCommand (): string {
-    const joinedUrls = this.urls.map(u => `"${u}"`).join(' ');
-
-    return `curl -L ${joinedUrls} >> /dev/null`;
-  }
 }
